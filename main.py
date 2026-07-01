@@ -1,19 +1,31 @@
 import os
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+from pipeline.graph import build_graph
 
 load_dotenv()
 
-print("Key loaded:", os.getenv("OPENROUTER_API_KEY")[:8] if os.getenv("OPENROUTER_API_KEY") else "MISSING")
+test_input = """
+Project: FreshCart - Grocery Delivery App
+We want to build a mobile-first grocery delivery platform.
+Key features: browse multiple stores, real-time inventory, 
+scheduled delivery windows, driver notifications, store owner dashboard,
+payment support, live order tracking, push notifications.
+Client wants to launch MVP within 3-4 months.
+Small team, no in-house developers.
+"""
 
-llm = ChatOpenAI(
-    model="openrouter/free",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
-    base_url="https://openrouter.ai/api/v1",
-    timeout=30,
-)
+graph = build_graph()
 
-print("Sending request...")
-response = llm.invoke("Say hello and confirm you're working.")
-print("Response received:")
-print(response.content)
+print("Running pipeline...\n")
+result = graph.invoke({"raw_text": test_input})
+
+print("\n--- KEY POINTS ---")
+print(result["key_points"])
+print("\n--- FUNCTIONAL REQUIREMENTS ---")
+print(result["functional_requirements"])
+print("\n--- USER STORIES ---")
+print(result["user_stories"])
+print("\n--- TECH STACK ---")
+print(result["tech_stack"])
+print("\n--- TIMELINE ---")
+print(result["timeline"])
